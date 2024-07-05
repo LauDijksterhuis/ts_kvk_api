@@ -5,7 +5,7 @@ export declare class KVK {
     baseUrl: string;
     certificate: string;
     httpsAgent: https.Agent;
-    constructor(apiKey: string, baseUrl: string | null, certificate?: string | null, httpsAgent?: https.Agent | null);
+    constructor(apiKey: string, baseUrl?: string | null, certificate?: string | null, httpsAgent?: https.Agent | null);
     getCertificate(): string;
     createHttpsAgent(): https.Agent;
     static validateKvkNummer(val: string): boolean;

@@ -15,7 +15,7 @@ export class KVK {
 
   constructor(
     apiKey: string,
-    baseUrl: string | null,
+    baseUrl?: string | null,
     certificate?: string | null,
     httpsAgent?: https.Agent | null
   ) {
