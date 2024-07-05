@@ -15,7 +15,27 @@ export declare class KVK {
         params?: object;
         headers?: object;
     }): Promise<any>;
-    zoeken({ kvkNummer, vestigingsnummer, postcode, huisnummer, pagina, resultatenPerPagina, ...params }: {
+    /**
+   * @deprecated This function is deprecated and will be removed in a future version.
+   * The KVK api will stop supporting searching on the V1 endpoint starting 29-07-2024
+   * Use [zoekenV2] instead.
+   */
+    zoeken({ kvkNummer, vestigingsnummer, postcode, huisnummer, pagina, aantal, ...params }: {
+        kvkNummer?: string;
+        rsin?: string;
+        vestigingsnummer?: string;
+        handelsnaam?: string;
+        straatnaam?: string;
+        plaats?: string;
+        postcode?: string;
+        huisnummer?: string;
+        huisnummerToevoeging?: string;
+        type?: 'hoofdvestiging' | 'nevenvestiging' | 'rechtspersoon';
+        InclusiefInactieveRegistraties?: boolean;
+        pagina?: number;
+        aantal?: number;
+    }): Promise<any>;
+    zoekenV2({ kvkNummer, vestigingsnummer, postcode, huisnummer, pagina, resultatenPerPagina, ...params }: {
         kvkNummer?: string;
         rsin?: string;
         vestigingsnummer?: string;

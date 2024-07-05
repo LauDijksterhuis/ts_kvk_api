@@ -29,7 +29,7 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_https_1 = __importDefault(require("node:https"));
 const node_crypto_1 = __importDefault(require("node:crypto"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
-const BASE_URL = 'https://api.kvk.nl/api/v1';
+const BASE_URL = 'https://api.kvk.nl/api';
 const CERTIFICATE_PATH = '../../certs/Private_G1_chain.pem';
 class KVK {
     constructor(apiKey, baseUrl, certificate, httpsAgent) {
@@ -75,7 +75,36 @@ class KVK {
             return data;
         });
     }
+    /**
+   * @deprecated This function is deprecated and will be removed in a future version.
+   * The KVK api will stop supporting searching on the V1 endpoint starting 29-07-2024
+   * Use [zoekenV2] instead.
+   */
     zoeken(_a) {
+        var { kvkNummer, vestigingsnummer, postcode, huisnummer, pagina = 1, aantal = 15 } = _a, params = __rest(_a, ["kvkNummer", "vestigingsnummer", "postcode", "huisnummer", "pagina", "aantal"]);
+        return __awaiter(this, void 0, void 0, function* () {
+            if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
+                throw new Error('KVK: Ongeldig kvknummer.');
+            if (vestigingsnummer && !KVK.validateVestigingsnummer(vestigingsnummer))
+                throw new Error('KVK: Ongeldig vestigingsnummer.');
+            if ((postcode && !huisnummer) || (huisnummer && !postcode))
+                throw new Error('KVK: Postcode en huisnummer mogen alleen in combinatie met elkaar gebruikt worden.');
+            if (pagina < 1 || pagina > 1000)
+                throw new Error('KVK: Pagina is minimaal 1 en maximaal 1000.');
+            if (aantal < 1 || aantal > 100)
+                throw new Error('KVK: Aantal is minimaal 1 en maximaal 100.');
+            return yield this.request({
+                endpoint: '/v1/zoeken',
+                params: Object.assign({ kvkNummer,
+                    vestigingsnummer,
+                    postcode,
+                    huisnummer,
+                    pagina,
+                    aantal }, params),
+            });
+        });
+    }
+    zoekenV2(_a) {
         var { kvkNummer, vestigingsnummer, postcode, huisnummer, pagina = 1, resultatenPerPagina = 15 } = _a, params = __rest(_a, ["kvkNummer", "vestigingsnummer", "postcode", "huisnummer", "pagina", "resultatenPerPagina"]);
         return __awaiter(this, void 0, void 0, function* () {
             if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
@@ -89,7 +118,7 @@ class KVK {
             if (resultatenPerPagina < 1 || resultatenPerPagina > 100)
                 throw new Error('KVK: Aantal is minimaal 1 en maximaal 100.');
             return yield this.request({
-                endpoint: '/zoeken',
+                endpoint: '/v2/zoeken',
                 params: Object.assign({ kvkNummer,
                     vestigingsnummer,
                     postcode,
@@ -104,7 +133,7 @@ class KVK {
             if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
                 throw new Error('KVK: Ongeldig kvknummer.');
             return yield this.request({
-                endpoint: `/basisprofielen/${kvkNummer}`,
+                endpoint: `/v1/basisprofielen/${kvkNummer}`,
                 params: {
                     geoData,
                 },
@@ -116,7 +145,7 @@ class KVK {
             if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
                 throw new Error('KVK: Ongeldig kvknummer.');
             return yield this.request({
-                endpoint: `/basisprofielen/${kvkNummer}/eigenaar`,
+                endpoint: `/v1/basisprofielen/${kvkNummer}/eigenaar`,
                 params: {
                     geoData,
                 },
@@ -128,7 +157,7 @@ class KVK {
             if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
                 throw new Error('KVK: Ongeldig kvknummer.');
             return yield this.request({
-                endpoint: `/basisprofielen/${kvkNummer}/hoofdvestiging`,
+                endpoint: `/v1/basisprofielen/${kvkNummer}/hoofdvestiging`,
                 params: {
                     geoData,
                 },
@@ -140,7 +169,7 @@ class KVK {
             if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
                 throw new Error('KVK: Ongeldig kvknummer.');
             return yield this.request({
-                endpoint: `/basisprofielen/${kvkNummer}/vestigingen`,
+                endpoint: `/v1/basisprofielen/${kvkNummer}/vestigingen`,
             });
         });
     }
@@ -149,7 +178,7 @@ class KVK {
             if (vestigingsnummer && !KVK.validateVestigingsnummer(vestigingsnummer))
                 throw new Error('KVK: Ongeldig vestigingsnummer.');
             return yield this.request({
-                endpoint: `/vestigingsprofielen/${vestigingsnummer}`,
+                endpoint: `/v1/vestigingsprofielen/${vestigingsnummer}`,
                 params: {
                     geoData,
                 },
@@ -161,7 +190,7 @@ class KVK {
             if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
                 throw new Error('KVK: Ongeldig kvknummer.');
             return yield this.request({
-                endpoint: `/naamgevingen/kvkNummer/${kvkNummer}`,
+                endpoint: `/v1/naamgevingen/kvkNummer/${kvkNummer}`,
             });
         });
     }
