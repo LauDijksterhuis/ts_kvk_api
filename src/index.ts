@@ -88,22 +88,22 @@ export class KVK {
     postcode,
     huisnummer,
     pagina = 1,
-    aantal = 15,
+    resultatenPerPagina = 15,
     ...params
   }: {
     kvkNummer?: string
     rsin?: string
     vestigingsnummer?: string
-    handelsnaam?: string
+    naam?: string
     straatnaam?: string
     plaats?: string
     postcode?: string
     huisnummer?: string
-    huisnummerToevoeging?: string
+    huisletter?: string
     type?: 'hoofdvestiging' | 'nevenvestiging' | 'rechtspersoon'
     InclusiefInactieveRegistraties?: boolean
     pagina?: number
-    aantal?: number
+    resultatenPerPagina?: number
   }): Promise<any> {
     if (kvkNummer && !KVK.validateKvkNummer(kvkNummer))
       throw new Error('KVK: Ongeldig kvknummer.')
@@ -119,7 +119,7 @@ export class KVK {
     if (pagina < 1 || pagina > 1000)
       throw new Error('KVK: Pagina is minimaal 1 en maximaal 1000.')
 
-    if (aantal < 1 || aantal > 100)
+    if (resultatenPerPagina < 1 || resultatenPerPagina > 100)
       throw new Error('KVK: Aantal is minimaal 1 en maximaal 100.')
 
     return await this.request({
@@ -130,7 +130,7 @@ export class KVK {
         postcode,
         huisnummer,
         pagina,
-        aantal,
+        resultatenPerPagina,
         ...params,
       },
     })
